@@ -1,0 +1,24 @@
+
+<ion-navbar primary *navbar>
+    <ion-button start>
+        <button clear light (click)="goBack()"><ion-icon name="arrow-back"></ion-icon>
+          Today's Attendance
+        </button>
+    </ion-button>
+</ion-navbar>
+<ion-content padding class="today-attendance">
+  <ion-list *ngIf="isThereClassToday">
+    <ion-item-sliding *ngFor="let student of presentedStudents">
+      <ion-item>
+          {{student.name}}
+          {{student.coyoteID}}
+      </ion-item>
+      <ion-item-options side="left" icon-left>
+      <button danger (click)="markAsAbsent(student)">
+           <ion-icon name="checkmark"></ion-icon>
+            Mark As Absent
+      </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

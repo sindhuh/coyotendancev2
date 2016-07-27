@@ -1,0 +1,30 @@
+<ion-navbar primary *navbar>
+  <ion-title>Coyotendance</ion-title>
+  <ion-buttons end>
+     <button (click)="logOut()">
+       <ion-icon name="log-out"></ion-icon>
+      logout
+    </button>
+  </ion-buttons>
+</ion-navbar>
+<ion-content padding class="">
+  <ion-list>
+    <ion-item-sliding *ngFor="let course of enrolledCourses">
+      <ion-item (click) = "viewCourse(course)">
+        {{course.name}}
+         {{course.title}}
+          {{course.location}}
+      </ion-item>
+      <ion-item-options side="left" icon-left>
+      <button  disabled={{course.markAttendanceButton}} (click)="markAttendance(course)">
+      <ion-icon name="checkmark-circle"></ion-icon>
+            Mark
+      </button>
+      <button danger (click)="dropCourse(course)">
+         <ion-icon name="trash"></ion-icon>
+          Drop
+        </button>
+    </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,45 @@
+<ion-header>
+<ion-navbar primary>
+  <ion-title>Course Details</ion-title>
+  <ion-buttons end>
+    <button (click)="editClass()">EDIT</button>
+  </ion-buttons>
+</ion-navbar>
+</ion-header>
+<ion-content padding class="course-details">
+  <ion-card>
+    <ion-card-header>
+      {{course.name}}
+    </ion-card-header>
+    <ion-card-content>
+      {{course.title}}<br> {{course.location}} <br> professor : {{professor.name}}
+    </ion-card-content>
+  </ion-card>
+  <ion-list>
+    <h5> Timings : </h5>
+    <ion-item-sliding *ngFor="let timing of course.timings">
+      <ion-item>
+        {{timing.day}} {{timing.startTime}} - {{timing.endTime}}
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+  <ion-list>
+    <h5>Students :</h5>
+    <ion-item-sliding *ngFor="let student of enrolledStudents">
+      <ion-item>
+        {{student.name}} {{student.coyoteID}}
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+  <button (click)="showTodayAttendance()">show attendance</button>
+  <button (click)="showPreviousAttendance()">show previous attendance</button>
+  <div class="col-md-6">
+    <base-chart class="chart"
+      [data]="doughnutChartData" 
+      [labels]="doughnutChartLabels" 
+      [chartType]="doughnutChartType"
+      (chartHover)="chartHovered($event)"
+      (chartClick)="chartClicked($event)">
+    </base-chart>
+  </div>
+</ion-content>

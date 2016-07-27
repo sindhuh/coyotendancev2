@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-navbar primary>
+    <button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Coyotendance</ion-title>
+    <ion-buttons end>
+     <button (click)="logOut()">
+     <ion-icon name='log-out'></ion-icon>
+      logout
+    </button>
+    <button (click)="addCourse()">
+      <ion-icon name='create'></ion-icon>
+      Add 
+    </button>
+  </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding class="page1">
+  <ion-list>
+    <ion-item-sliding *ngFor="let course of courses">
+      <ion-item (click)="viewCourse(course)">
+        {{course.name}}
+         {{course.title}}
+          {{course.location}}
+      </ion-item>
+    <ion-item-options side="left" icon-left>
+      <button (click)="editCourse(course)">
+           <ion-icon name="create"></ion-icon>
+            Edit
+      </button>
+      <button danger (click)="deleteCourse(course)">
+         <ion-icon name="trash"></ion-icon>
+          Delete
+      </button>
+    </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

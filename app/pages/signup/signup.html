@@ -1,0 +1,28 @@
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>Name</ion-label>
+      <ion-input type="text" value="" [(ngModel)]="name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Coyote ID</ion-label>
+      <ion-input type="text" value="" [(ngModel)]="coyoteID"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input type="email" value="" [(ngModel)]="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" value="" [(ngModel)]="password"></ion-input>
+    </ion-item>
+     <ion-item>
+      <ion-label>Are you professor?</ion-label>
+      <ion-checkbox [(ngModel)]="isProfessor"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <div padding>
+    <button primary block (click)="registerUser()">SignUp</button>
+  </div>
+</ion-content>
