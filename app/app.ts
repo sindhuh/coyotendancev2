@@ -3,8 +3,9 @@ import {App, ionicBootstrap, Platform, MenuController, Nav} from 'ionic-angular'
 import {StatusBar} from 'ionic-native';
 import {AuthPage} from './pages/auth/auth';
 import {Backend} from './providers/backend/backend';
-
-//import {ListPage} from './pages/list/list';
+import {SettingsPage} from './pages/settings/settings';
+import {UserProfilePage} from './pages/user-profile/user-profile';
+import '../node_modules/chart.js/dist/Chart.bundle.min.js';
 
 
 @Component({
@@ -15,33 +16,25 @@ import {Backend} from './providers/backend/backend';
 class MyApp {
   @ViewChild(Nav) nav: Nav;
   rootPage: any = AuthPage;
-  pages: Array<{title: string, component: any}>;
-
-  constructor(
-    private platform: Platform,
-    private menu: MenuController
-  ) {
+  pages: Array<{ title: string, component: any }>;
+  userObject: any;
+  constructor( private platform: Platform, private menu: MenuController, private backend : Backend) {
     this.initializeApp();
-
-    // set our app's pages
-    /*this.pages = [
-      { title: 'Hello Ionic', component: HelloIonicPage },
-      { title: 'My First List', component: ListPage }
-    ];*/
+    this.userObject = this.backend.userDetails;
+    this.pages = [
+      { title: 'Settings', component: SettingsPage },
+      { title: 'Profile', component: UserProfilePage }
+    ];
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
     });
   }
 
   openPage(page) {
-    // close the menu when clicking a link from the menu
     this.menu.close();
-    // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
   }
 }

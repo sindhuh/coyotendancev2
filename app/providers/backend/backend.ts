@@ -18,6 +18,7 @@ export class Backend {
   initialized: boolean = false;
   courseDates = {};
   userDetails: any = null;
+  ipAddress: any = "";
   BASE_URL: string = "http://localhost:8888/";
 
   constructor(public http: Http, public events: Events) {
@@ -247,6 +248,7 @@ export class Backend {
   }
 
   logout() {
+    
     this.userDetails = null;
     localStorage.removeItem("email");
     localStorage.removeItem("userObject");

@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import {Page, NavController, NavParams} from 'ionic-angular';
+import {Page, NavController, NavParams, Events } from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
 import {ProfessorMainPage} from '../professor-main/professor-main';
-//import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from 'angular2/common';
-//import {CHART_DIRECTIVES} from 'ng2-charts/ng2-charts';
-
 
 @Component({
   templateUrl: 'build/pages/present-students/present-students.html',
@@ -15,7 +12,7 @@ export class PresentStudentsPage {
   courseId: any;
   presentedStudents: any[] = [];
   isThereClassToday: boolean = true;
-  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams) {
+  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams, public events: Events) {
     this.courseId = this.navParams.data;
   }
 
@@ -49,7 +46,7 @@ export class PresentStudentsPage {
   }
 
   goBack() {
-    this.nav.push(ProfessorMainPage);
+    this.events.publish('professor:main', "");
   }
 }
 

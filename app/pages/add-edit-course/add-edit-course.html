@@ -1,13 +1,13 @@
 <ion-header>
-<ion-navbar primary>
-  <ion-title>Add Course</ion-title>
-  <ion-buttons end>
-    <button (click)="updateClass()">
+  <ion-navbar primary>
+    <ion-title>Add Course</ion-title>
+    <ion-buttons end>
+      <button (click)="updateClass()">
       <ion-icon name='download'></ion-icon>
       save
     </button>
-  </ion-buttons>
-</ion-navbar>
+    </ion-buttons>
+  </ion-navbar>
 </ion-header>
 <ion-content padding class="add-course">
   <ion-list>
@@ -32,20 +32,18 @@
       </ion-select>
     </ion-item>
     <ion-list>
-    <ion-item-sliding *ngFor="let timing of course.timings">
-      <ion-item>
-          {{timing.day}}
-          {{timing.startTime}}
-          {{timing.endTime}}
-      </ion-item>
-    <ion-item-options side="left">
-      <button danger (click)="deleteTiming(timing)">
+      <ion-item-sliding *ngFor="let timing of course.timings">
+        <ion-item>
+          {{timing.day}} {{timing.startTime}} {{timing.endTime}}
+        </ion-item>
+        <ion-item-options side="right">
+          <button danger (click)="deleteTiming(timing)">
          <ion-icon name="trash"></ion-icon>
           Delete
         </button>
-    </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
     <ion-item>
       <ion-label floating>Day</ion-label>
       <ion-select [(ngModel)]="day">
@@ -53,15 +51,15 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label stacked>start time</ion-label>
-      <ion-input type="time" [(ngModel)] = "startTime"></ion-input>
+      <ion-label floating>Start Time</ion-label>
+      <ion-datetime displayFormat="hh:mm A" pickerFormat="hh:mm A" [(ngModel)]="startTime"></ion-datetime>
     </ion-item>
-        <ion-item>
-      <ion-label stacked> end time</ion-label>
-      <ion-input type="time" [(ngModel)] = "endTime"></ion-input>
-    </ion-item> 
+    <ion-item>
+      <ion-label floating>End Time</ion-label>
+      <ion-datetime displayFormat="hh:mm A" pickerFormat="hh:mm A" [(ngModel)]="endTime"></ion-datetime>
+    </ion-item>
   </ion-list>
-    <button (click) = "addTiming()">  
+  <button (click)="addTiming()">  
       add timing
     </button>
 </ion-content>

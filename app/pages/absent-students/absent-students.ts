@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {Page, NavController, NavParams} from 'ionic-angular';
+import {Page, NavController, NavParams, Events} from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
 import {StudentTabsPage} from '../student-tabs/student-tabs'
 import {ProfessorMainPage} from '../professor-main/professor-main';
-//import * as _ from 'lodash';
+import * as _ from 'lodash';
+import {CourseDetailsPage} from '../course-details/course-details';
 
 @Component({
   templateUrl: 'build/pages/absent-students/absent-students.html',
@@ -14,7 +15,7 @@ export class AbsentStudentsPage {
   absentStudents: any[] = [];
   isThereClassToday: boolean =  true;
   course: any;
-  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams)  {
+  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams, public events: Events)  {
     
   }
 
@@ -31,7 +32,7 @@ export class AbsentStudentsPage {
           return;
       }
       if (attendedStudentIds) {
-        //absentStudentIds = _.difference(course.students, attendedStudentIds);
+        absentStudentIds = _.difference(course.students, attendedStudentIds);
       } else {
         absentStudentIds = course.students;
       }
@@ -47,7 +48,8 @@ export class AbsentStudentsPage {
         this.absentStudents.splice(index, 1);
       })
   }
+
   goBack() {
-    this.nav.push(ProfessorMainPage);
+    this.events.publish('professor:main', "");
   }
 }
