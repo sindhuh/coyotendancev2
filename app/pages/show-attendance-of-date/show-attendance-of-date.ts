@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Page, NavController, NavParams} from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
-
+import {AttendanceTabsPage}
 @Component({
   templateUrl: 'build/pages/show-attendance-of-date/show-attendance-of-date.html',
 })

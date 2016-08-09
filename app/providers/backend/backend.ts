@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import { Events } from 'ionic-angular';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import 'rxjs/add/operator/map';
-import {AuthPage} from "../../pages/auth/auth";
+import {Geolocation} from 'ionic-native'
 
 @Injectable()
 export class Backend {
@@ -17,13 +17,14 @@ export class Backend {
   days: string[] = [];
   initialized: boolean = false;
   courseDates = {};
+  location = {};
   userDetails: any = null;
   ipAddress: any = "";
-  BASE_URL: string = "http://localhost:8888/";
-
+  BASE_URL: string = "http://localhost:8100/";
   constructor(public http: Http, public events: Events) {
     this.userDetails = JSON.parse(localStorage.getItem("userObject"));
   }
+
   __addOrUpdateCourse(course: any) {
     if (this.courseById[course._id]) {
       this.__removeCourse(course._id);
@@ -160,7 +161,7 @@ export class Backend {
         });
     });
   }
-  
+
   updateCourse(course) {
     var courseJson = JSON.stringify(course);
     var headers = new Headers({ 'Content-Type': 'application/json' });
@@ -172,7 +173,7 @@ export class Backend {
     return new Promise(resolve => {
       this.http.post(URL, courseJson)
         .map(res => res.json())
-        .subscribe(data => {       
+        .subscribe(data => {
           this.__addOrUpdateCourse(data);
           resolve(data);
         });
@@ -240,7 +241,7 @@ export class Backend {
         .subscribe(data => {
           this.userDetails = data;
           var userObject = JSON.stringify(data);
-          localStorage.setItem("userObject", userObject);          
+          localStorage.setItem("userObject", userObject);
           resolve(true);
           this.events.publish('user:loggedin', this.userDetails);
         });
@@ -248,7 +249,6 @@ export class Backend {
   }
 
   logout() {
-    
     this.userDetails = null;
     localStorage.removeItem("email");
     localStorage.removeItem("userObject");
@@ -263,6 +263,7 @@ export class Backend {
         });
     });
   }
+
   getCourseTiming(coureTimings) {
     var dayMapping = {
       "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6
@@ -309,9 +310,36 @@ export class Backend {
     });
   }
 
-  markAttendance(courseId, studentId) {
+  getLocation() {
     return new Promise(resolve => {
-      this.http.post(this.BASE_URL + "markAttendance/" + courseId, studentId)
+      Geolocation.getCurrentPosition().then(function(position){
+          var location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          }
+          resolve(location);
+          })
+      });
+  }
+
+  setLocation(location, course_id) {
+    var professorLocation = JSON.stringify(location);
+    return new Promise(resolve => {
+      this.http.post(this.BASE_URL + "setProfessorLocation/" +course_id , professorLocation)
+      .map(res => res.json())
+      .subscribe(data => {
+        resolve(data);
+      })
+    })
+  }
+
+  markAttendance(courseId, studentLocation) {
+    var details = {
+      studentLocation: studentLocation,
+      studentId: this.userDetails._id
+    }
+    return new Promise(resolve => {
+      this.http.post(this.BASE_URL + "markAttendance/" +courseId, JSON.stringify(details))
         .map(res => res.json())
         .subscribe(modifiedAttendance => {
           this.__addOrUpdateCourse(modifiedAttendance);

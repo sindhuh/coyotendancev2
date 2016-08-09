@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { Platform, Alert, Page, ActionSheet, NavController } from 'ionic-angular';
+import { Platform, Alert, Page, ActionSheet, NavController,Loading} from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
 import {AddEditCoursePage} from '../add-edit-course/add-edit-course';
-import {AuthPage} from '../auth/auth';
+import {LoginPage} from '../login/login';
 import {CourseDetailsPage} from '../course-details/course-details';
+import {Geolocation} from 'ionic-native'
 
 @Component({
   templateUrl: 'build/pages/professor-main/professor-main.html',
@@ -12,6 +13,7 @@ import {CourseDetailsPage} from '../course-details/course-details';
 export class ProfessorMainPage  {
   courses: any[];
   locations : any[];
+  professorLocation: {};
   constructor(public nav: NavController, public backend: Backend, public platform: Platform) {
     this.backend.initialize(this.backend.userDetails._id).then(success => {
       if (success) {
@@ -21,7 +23,26 @@ export class ProfessorMainPage  {
       }
     });
   }
-  
+  // here professor start attendance
+  startAttendance(course) {
+    let loading = Loading.create({
+      content: 'Please wait...'
+    });
+    this.nav.present(loading);
+    this.backend.getLocation().then(location => {
+      this.backend.setLocation(location, course._id).then(data => {
+        setTimeout(() => {
+          loading.dismiss();
+        });
+        let alert = Alert.create({
+          subTitle : "You can start attendance now!",
+          buttons: ['OK']
+        });
+        this.nav.present(alert);
+      })
+    });
+  }  
+
   addCourse() {
     this.nav.push(AddEditCoursePage);
   }
@@ -53,12 +74,7 @@ export class ProfessorMainPage  {
     });
     this.nav.present(dropConfirm);
   }
-  
-  logOut() {
-    this.backend.logout();
-    this.nav.push(AuthPage);
-  }
-  
+
   editCourse(course) {
     this.nav.push(AddEditCoursePage, {id: course._id});
   }

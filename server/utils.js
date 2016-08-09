@@ -1,3 +1,4 @@
+
 (function () {
     var _ = require('lodash');
     var utils = {
@@ -45,6 +46,37 @@
                 startDate.setDate(startDate.getDate() + 1);
             }
             return courseDates;
+        },
+
+        getLocation : function() {
+            var location = {};
+            Geolocation.getCurrentPosition().then(function (position) {
+                location.latitude = position.coords.latitude;
+                location.longitude = position.coords.longitude;
+            }, function (err) {
+                console.log("geolocation error : ", err);
+            });
+            return this.professorLocation;
+        },
+
+        getDistanceBetweenTwoLocations: function (studentLocation , professorLocation) {
+            var radlat1 = Math.PI * professorLocation.latitude / 180;
+            var radlat2 = Math.PI * studentLocation.latitude / 180;
+            var theta = professorLocation.longitude - studentLocation.longitude;
+            var radtheta = Math.PI * theta / 180;
+            var distance = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            distance = Math.acos(distance);
+            distance = distance * 180 / Math.PI;
+            distance = distance * 60 * 1.1515;
+            var unit = "k";
+            if (unit == "K") { 
+                distance = distance * 1.609344 
+            };
+            if (unit == "N") {
+                 distance = distance * 0.8684 
+            };
+                        console.log("distance :4 ", distance);
+            return distance;
         }
     }
     module.exports = utils;

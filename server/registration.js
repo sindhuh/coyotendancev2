@@ -15,6 +15,7 @@
                         res.writeHead(200, {
                             'Content-Type': 'application/json; charset=utf-8'
                         });
+                        console.log("reaching registration");
                         delete dbUser.password;
                         res.end(JSON.stringify(dbUser));
                     } else {

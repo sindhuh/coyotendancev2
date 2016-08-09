@@ -47,9 +47,14 @@ gulp.task('watch', ['clean'], function(done){
   );
 });
 
+gulp.task("assets", function() {
+    return gulp.src(["app/assets/images/*"])
+        .pipe(gulp.dest("www/build/images"));
+});
+
 gulp.task('build', ['clean'], function(done){
   runSequence(
-    ['sass', 'html', 'fonts', 'scripts'],
+    ['sass', 'html', 'fonts', 'assets','scripts'],
     function(){
       buildBrowserify({
         minify: isRelease,

@@ -5,7 +5,7 @@ var ObjectId = mongojs.ObjectId;
 var _ = require('lodash');
 var registration = require('./registration');
 var utils = require('./utils');
-
+var professorLocation = {};
 //var db = mongojs('mongodb://admin:admin123@ds053718.mongolab.com:53718/restifymyapp', ['products']);
 var db = mongojs('coyotendance', ['courses', 'quarters', 'appUsers']);
 
@@ -102,7 +102,7 @@ server.del('/course/:id', function (req, res, next) {
 
 server.post('/course/:id', function (req, res, next) {
     var paramCourse = JSON.parse(req.body);
-   // _.omit(paramCourse, "students", "professorID", "dateAndAttendance", "timings");
+    // _.omit(paramCourse, "students", "professorID", "dateAndAttendance", "timings");
     db.courses.findOne(ObjectId(req.params.id), function (err, data) {
         var paramCourse = JSON.parse(req.body);
         delete paramCourse["_id"];
@@ -190,6 +190,19 @@ server.post("/deleteCourseTiming/:id", function (req, res, next) {
         });
 });
 
+server.post('/setProfessorLocation/:id', function (req, res, next) {
+    var location = JSON.parse(req.body);
+    var courseId = ObjectId(req.params.id);
+    db.courses.findOne({ _id: courseId }, function (err, course) {
+        db.courses.update({ _id: courseId }, {
+            $set: { "professorLocation": location }
+        }, function (err, result) {
+            utils.sendObjectInResponse(res, result);
+        })
+    })
+})
+
+
 server.post('/markAsAbsent/:id', function (req, res, next) {
     var studentId = req.body;
     var courseId = ObjectId(req.params.id);
@@ -205,25 +218,33 @@ server.post('/markAsAbsent/:id', function (req, res, next) {
                 console.log(modifiedCourse);
                 utils.sendObjectInResponse(res, modifiedCourse);
             })
-    })
+        })
 })
 
+
+
 server.post('/markAttendance/:id', function (req, res, next) {
-    var studentId = req.body;
+    var requestDetails = JSON.parse(req.body);
+    var studentId = requestDetails.studentId;
     var courseId = ObjectId(req.params.id);
     var date = new Date();
     var todayDate = "date" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getFullYear();
     var attendanceDate = "dateAndAttendance." + todayDate;
     var data = {};
     data[attendanceDate] = ObjectId(studentId);
-    db.courses.update({ _id: ObjectId(req.params.id) },
-        { $push: data },
-        function (err, data) {
-            db.courses.findOne(ObjectId(req.params.id), function (err, modifiedCourse) {
-                console.log(modifiedCourse);
-                utils.sendObjectInResponse(res, modifiedCourse);
-            })
-        });
+    db.courses.findOne({ _id: courseId }, function (err, course) {
+        var distance = utils.getDistanceBetweenTwoLocations(course.professorLocation, requestDetails.studentLocation);
+        if (parseInt(distance) <= 0.1) {
+            db.courses.update({ _id: ObjectId(req.params.id) },
+                { $push: data },
+                function (err, data) {
+                    db.courses.findOne(ObjectId(req.params.id), function (err, modifiedCourse) {
+                        console.log(modifiedCourse);
+                        utils.sendObjectInResponse(res, modifiedCourse);
+                    })
+                });
+        }
+    })
 });
 
 module.exports = server;

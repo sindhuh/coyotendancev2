@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import {Page, NavParams, NavController} from 'ionic-angular';
+import {Page, NavParams, NavController, Platform} from 'ionic-angular';
+import {Geolocation} from 'ionic-native'
 import {AddEditCoursePage} from '../add-edit-course/add-edit-course';
 import {Backend} from '../../providers/backend/backend';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from '@angular/common';
 import {CHART_DIRECTIVES} from 'ng2-charts/ng2-charts';
-
 import {AttendanceTabsPage} from '../attendance-tabs/attendance-tabs';
 import {PreviousAttendanceDatesPage} from '../previous-attendance-dates/previous-attendance-dates';
+
 
 
 @Component({
@@ -15,26 +16,28 @@ import {PreviousAttendanceDatesPage} from '../previous-attendance-dates/previous
 })
 
 export class CourseDetailsPage {
-  absentStudentsCount : any;
-  presentStudentsCount : any;
-  public chartLabels:string[] = ['Present Students', 'Absent Students'];
-  chartData:number[] = [];
-  public chartType:string = 'doughnut';
+  absentStudentsCount: any;
+  presentStudentsCount: any;
+  public chartLabels: string[] = ['Present Students', 'Absent Students'];
+  chartData: number[] = [];
+  public chartType: string = 'doughnut';
   course: any;
   enrolledStudents: any[] = [];
   professor: any;
+  isProfessor : boolean;
   courseId: any;
-  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams) {
+  attendanceDate: any;
+  constructor(public nav: NavController, public backend: Backend, public navParams: NavParams, public platform: Platform) {
     this.course = {};
     this.professor = {};
     this.courseId = this.navParams.get('id');
+    var date = new Date();
+    this.attendanceDate = "date" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getFullYear();
+    
   }
-
-  public chartClicked(e:any):void {
-    console.log(e);
+  public chartClicked(e: any): void {
   }
-  public chartHovered(e:any):void {
-    console.log(e);
+  public chartHovered(e: any): void {
   }
 
   editClass() {
@@ -42,24 +45,23 @@ export class CourseDetailsPage {
   }
 
   ionViewWillEnter() {
+    this.isProfessor = this.backend.userDetails.isProfessor;
     if (this.courseId != undefined) {
       this.backend.getCourseForced(this.courseId, true).then(course => {
-        var date = new Date();
-        var todayDate = "date" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getFullYear();
         this.professor = course.users[course.professorID];
-        this.enrolledStudents = course.students.map(studentId => course.users[studentId]); 
+        this.enrolledStudents = course.students.map(studentId => course.users[studentId]);
         this.course = course;
-        this.chartData.push(this.course.dateAndAttendance[todayDate].length);
-        this.chartData.push(this.course.students.length - this.course.dateAndAttendance[todayDate].length);
+        this.chartData.push(this.course.dateAndAttendance[this.attendanceDate].length);
+        this.chartData.push(this.course.students.length - this.course.dateAndAttendance[this.attendanceDate].length);
       });
     }
   }
-  
+
   showTodayAttendance() {
-    this.nav.push(AttendanceTabsPage, { id: this.course._id });
+    this.nav.push(AttendanceTabsPage, { id: this.course._id, date : this.attendanceDate});
   }
 
-  showPreviousAttendance(){
+  showPreviousAttendance() {
     this.nav.push(PreviousAttendanceDatesPage, { id: this.course._id });
   }
 }
