@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, Alert, Page, ActionSheet, NavController,Loading} from 'ionic-angular';
+import { Platform, Alert, Page, ActionSheet, NavController, Loading} from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
 import {AddEditCoursePage} from '../add-edit-course/add-edit-course';
 import {LoginPage} from '../login/login';
@@ -10,20 +10,39 @@ import {Geolocation} from 'ionic-native'
   templateUrl: 'build/pages/professor-main/professor-main.html',
 })
 
-export class ProfessorMainPage  {
+export class ProfessorMainPage {
   courses: any[];
-  locations : any[];
+  locations: any[];
   professorLocation: {};
   constructor(public nav: NavController, public backend: Backend, public platform: Platform) {
     this.backend.initialize(this.backend.userDetails._id).then(success => {
       if (success) {
-        this.backend.loadCourses(this.backend.userDetails._id).then(courses => {       
-          this.courses = courses;  
+        this.backend.loadCourses(this.backend.userDetails._id).then(courses => {
+          this.courses = courses;
+          var date = new Date();
+          var todayDate = "date" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getFullYear();
+          for (var course of this.courses) {
+            console.log("course name :", course.name);
+            if (course.dateAndAttendance[todayDate] != undefined) {
+              var courseTime = this.backend.getTodayTimeAndDateFromTimings(course.timings);
+              var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
+                courseTime.startTime.split(":")[0], courseTime.startTime.split(":")[1]);
+              var endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
+                courseTime.endTime.split(":")[0], courseTime.endTime.split(":")[1]);
+              if ((new Date()).getTime() >= startTime.getTime() && (new Date()).getTime() < endTime.getTime()) {
+                course.startAttendanceButton = null;
+              } else {
+                course.startAttendanceButton = true;
+              }
+            } else {
+              course.startAttendanceButton = true;
+            }
+          }
         });
       }
     });
   }
-  // here professor start attendance
+
   startAttendance(course) {
     let loading = Loading.create({
       content: 'Please wait...'
@@ -35,23 +54,24 @@ export class ProfessorMainPage  {
           loading.dismiss();
         });
         let alert = Alert.create({
-          subTitle : "You can start attendance now!",
+          subTitle: "You can start attendance now!",
           buttons: ['OK']
         });
         this.nav.present(alert);
+        course.startAttendanceButton = true
       })
     });
-  }  
+  }
 
   addCourse() {
     this.nav.push(AddEditCoursePage);
   }
-  
+
   viewCourse(course) {
     this.nav.push(CourseDetailsPage, { id: course._id })
   }
- 
-  deleteCourse(course){
+
+  deleteCourse(course) {
     let dropConfirm = Alert.create({
       title: 'Delete Course',
       message: 'Are you sure you want to delete this class?',
@@ -76,7 +96,6 @@ export class ProfessorMainPage  {
   }
 
   editCourse(course) {
-    this.nav.push(AddEditCoursePage, {id: course._id});
+    this.nav.push(AddEditCoursePage, { id: course._id });
   }
 }
-  

@@ -16,11 +16,11 @@ export class Backend {
   quarters: string[] = [];
   days: string[] = [];
   initialized: boolean = false;
-  courseDates = {};
+  courseDates = {};e
   location = {};
   userDetails: any = null;
   ipAddress: any = "";
-  BASE_URL: string = "http://localhost:8100/";
+  BASE_URL: string = "http://10.0.27.247:8888/";
   constructor(public http: Http, public events: Events) {
     this.userDetails = JSON.parse(localStorage.getItem("userObject"));
   }
@@ -250,6 +250,9 @@ export class Backend {
 
   logout() {
     this.userDetails = null;
+    this.enrolled = [];
+    this.available = [];
+    this.courses = [];
     localStorage.removeItem("email");
     localStorage.removeItem("userObject");
   }
@@ -264,12 +267,12 @@ export class Backend {
     });
   }
 
-  getCourseTiming(coureTimings) {
+  getTodayTimeAndDateFromTimings(coureTimings) {
     var dayMapping = {
       "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3, "Thursday": 4, "Friday": 5, "Saturday": 6
     }
     for (var i = 0; i < coureTimings.length; i++) {
-      if (dayMapping[coureTimings[i].day] = (new Date()).getDay()) {
+      if (dayMapping[coureTimings[i].day] == (new Date()).getDay()) {
         return coureTimings[i];
       }
     }
@@ -285,6 +288,15 @@ export class Backend {
           resolve(this.courseById[course_id]);
         });
     });
+  }
+
+
+exportToCSV(jsonData) {
+    return new Promise<any[]>(resolve => {
+      this.http.post(this.BASE_URL + "exportToCSV", JSON.stringify(jsonData))
+        .subscribe(data => {
+        });
+    })
   }
 
   deleteTiming(course_id, timing) {
@@ -312,24 +324,24 @@ export class Backend {
 
   getLocation() {
     return new Promise(resolve => {
-      Geolocation.getCurrentPosition().then(function(position){
-          var location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          }
-          resolve(location);
-          })
-      });
+      Geolocation.getCurrentPosition().then(function (position) {
+        var location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }
+        resolve(location);
+      })
+    });
   }
 
   setLocation(location, course_id) {
     var professorLocation = JSON.stringify(location);
     return new Promise(resolve => {
-      this.http.post(this.BASE_URL + "setProfessorLocation/" +course_id , professorLocation)
-      .map(res => res.json())
-      .subscribe(data => {
-        resolve(data);
-      })
+      this.http.post(this.BASE_URL + "setProfessorLocation/" + course_id, professorLocation)
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        })
     })
   }
 
@@ -339,7 +351,7 @@ export class Backend {
       studentId: this.userDetails._id
     }
     return new Promise(resolve => {
-      this.http.post(this.BASE_URL + "markAttendance/" +courseId, JSON.stringify(details))
+      this.http.post(this.BASE_URL + "markAttendance/" + courseId, JSON.stringify(details))
         .map(res => res.json())
         .subscribe(modifiedAttendance => {
           this.__addOrUpdateCourse(modifiedAttendance);

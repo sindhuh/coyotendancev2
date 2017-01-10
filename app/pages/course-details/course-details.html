@@ -19,9 +19,6 @@
       </ion-card-content>
     </ion-card>
   </div>
-  <base-chart class="chart" [data]="chartData" [labels]="chartLabels" [chartType]="chartType" (chartHover)="chartHovered($event)"
-    (chartClick)="chartClicked($event)">
-  </base-chart>
   <ion-list>
     <ion-item-divider class="item-background">
       <ion-label class="item-heading">Timings</ion-label>
@@ -43,7 +40,6 @@
     <ion-item-sliding *ngFor="let student of enrolledStudents">
       <ion-item>
         <ion-avatar item-left>
-          <img src="img/avatar-finn.png">
         </ion-avatar>
         <h2>{{student.name}}</h2>
         <p>{{student.coyoteID}}</p>
@@ -54,7 +50,7 @@
     <ion-item-divider class="item-background">
       <ion-label class="item-heading">Actions</ion-label>
     </ion-item-divider>
-    <button ion-item (click)="showTodayAttendance()">Attendance</button>
+    <button ion-item (click)="showTodayAttendance(course)">Attendance</button>
     <button ion-item (click)="showPreviousAttendance()">Previous Attendance</button>
   </ion-list>
 </ion-content>

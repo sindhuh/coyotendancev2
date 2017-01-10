@@ -16,34 +16,31 @@ export class EnrolledCoursesPage {
     this.backend.enrolledCourses(this.backend.userDetails._id)
       .then(enrolledCourses => {
         this.enrolledCourses = enrolledCourses;
-        console.log("reaching here : -1", this.enrolledCourses);
         this.studentData = this.backend.userDetails;
         var date = new Date();
         var todayDate = "date" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getFullYear();
         for (var course of this.enrolledCourses) {
-          if (course.dateAndAttendance[todayDate] != undefined) {
-            this.courseTimings = course.timings;
-            var data = this.backend.getCourseTiming(this.courseTimings);
-            var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
-              data.startTime.split(":")[0], data.startTime.split(":")[1]);
-            var endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
-              data.endTime.split(":")[0], data.endTime.split(":")[1]);
-            if ((new Date()).getTime() >= startTime.getTime() && (new Date()).getTime() < endTime.getTime()) {
-              if (course.dateAndAttendance[todayDate].length == 0) {
-                course.markAttendanceButton = null;
-              }
+          var differenceBetweenTimes = ((new Date()).getTime()) - parseInt(course.startAttendanceTime)
+          if (differenceBetweenTimes / 1000 / 60 < 15) {
+            console.log(course.dateAndAttendance[todayDate].length);
+            if (course.dateAndAttendance[todayDate].length == 0) {
+              course.markAttendanceButton = null;
+            } else {
               for (var i = 0; i < course.dateAndAttendance[todayDate].length; i++) {
-                console.log(course.dateAndAttendance[todayDate][i], this.studentData._id);
+                console.log(course.dateAndAttendance[todayDate][i], this.studentData._id)
                 if (course.dateAndAttendance[todayDate][i] == this.studentData._id) {
                   course.markAttendanceButton = true;
+                  console.log("reaching 3")
                   break;
                 } else {
                   course.markAttendanceButton = null;
+                  console.log("reaching 4")
                 }
               }
-            } else {
-              course.markAttendanceButton = true;
             }
+          } else {
+            course.markAttendanceButton = true;
+            console.log("reaching 2");
           }
         }
       });

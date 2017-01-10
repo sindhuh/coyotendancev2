@@ -1,13 +1,20 @@
 import { Component } from '@angular/core';
 import {Page, NavController, NavParams, Platform} from 'ionic-angular';
 import {Backend} from '../../providers/backend/backend';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgClass} from '@angular/common';
+import {CHART_DIRECTIVES} from 'ng2-charts/ng2-charts';
 import * as _ from 'lodash';
 
 @Component({
   templateUrl: 'build/pages/attendance-tabs/attendance-tabs.html',
+  directives: [CHART_DIRECTIVES, NgClass, CORE_DIRECTIVES, FORM_DIRECTIVES]
+
 })
 
 export class AttendanceTabsPage {
+  public chartLabels: string[] = ['Present Students', 'Absent Students'];
+  chartData: number[] = [];
+  public chartType: string = 'doughnut';
   enrolledStudents: any[] = [];
   absentStudents: any[] = [];
   presentedStudents: any[] = [];
@@ -23,24 +30,31 @@ export class AttendanceTabsPage {
     var date = this.attendanceDate.split("_");
     this.date = date[0].split("").pop() + "/" + date[1] + "/" +date[2]
   }
-
+  public chartClicked(e: any): void {
+  }
+  public chartHovered(e: any): void {
+  }
   ionViewWillEnter() {
     this.backend.getCourse(this.navParams.get('id')).then(course => {
       this.course = course;
       this.attendanceDate = this.navParams.get('date');
       var attendedStudentIds = course.dateAndAttendance[this.attendanceDate];
       var absentStudentIds;
-      if(!course.dateAndAttendance[this.attendanceDate]) {
-          this.isThereClassToday =  false;
-          return;
-      }
       if (attendedStudentIds) {
         this.presentedStudents = attendedStudentIds.map(studentId => course.users[studentId]);
         absentStudentIds = _.difference(course.students, attendedStudentIds);
       } else {
         absentStudentIds = course.students;
       }
-      this.absentStudents = absentStudentIds.map(studentId => course.users[studentId]);
+    this.absentStudents = absentStudentIds.map(studentId => course.users[studentId]);
+    console.log(this.absentStudents);
+    this.chartData.push(this.course.dateAndAttendance[this.attendanceDate].length);
+    this.chartData.push(this.course.students.length - this.course.dateAndAttendance[this.attendanceDate].length);
+    });
+  }
+
+  exportJsonToCSV() {
+    this.backend.exportToCSV(this.absentStudents).then(data => {
     });
   }
 

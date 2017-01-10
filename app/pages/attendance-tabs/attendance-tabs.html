@@ -1,6 +1,11 @@
 <ion-header>
   <ion-navbar primary no-border-bottom>
     <ion-title>Attendance on {{date}}</ion-title>
+    <ion-buttons end>
+      <button (click)="exportJsonToCSV()">
+      export
+    </button>
+    </ion-buttons>
   </ion-navbar>
   <ion-toolbar [attr.primary]="isAndroid ? '' : null" no-border-top>
     <ion-segment [(ngModel)]="students" [attr.light]="isAndroid ? '' : null">
@@ -9,7 +14,10 @@
     </ion-segment>
   </ion-toolbar>
 </ion-header>
-<ion-content class = "attendance-tabs">
+<ion-content class="attendance-tabs">
+  <base-chart class="chart" [data]="chartData" [labels]="chartLabels" [chartType]="chartType" (chartHover)="chartHovered($event)"
+    (chartClick)="chartClicked($event)">
+  </base-chart>
   <div [ngSwitch]="students">
     <div *ngSwitchCase="'absent'">
       <div class="card-background-page" *ngIf="!absentStudents || absentStudents.length <= 0">

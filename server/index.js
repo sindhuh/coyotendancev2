@@ -5,6 +5,9 @@ var ObjectId = mongojs.ObjectId;
 var _ = require('lodash');
 var registration = require('./registration');
 var utils = require('./utils');
+var json2csv = require('json2csv');
+var fs = require('fs');
+
 var professorLocation = {};
 //var db = mongojs('mongodb://admin:admin123@ds053718.mongolab.com:53718/restifymyapp', ['products']);
 var db = mongojs('coyotendance', ['courses', 'quarters', 'appUsers']);
@@ -64,6 +67,54 @@ server.post('/course', function (req, res, next) {
     return next();
 });
 
+server.post('/exportToCSV', function (req, res, next) {
+    var jsonBody = JSON.parse(req.body);
+    var fields = ['name', 'coyoteID', 'email'];
+    var csv = json2csv({ data: jsonBody, fields: fields });
+    console.log(csv);
+    fs.writeFile('file.csv', csv, function (err) {
+        if (err) {
+            throw err;
+        }
+        console.log('file saved');
+    });
+    var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+    var request = sg.emptyRequest({
+        method: 'POST',
+        path: '/v3/mail/send',
+        body: {
+            personalizations: [
+                {
+                    to: [
+                        {
+                            email: 'sindhu.h.43@gmail.com'
+                        }
+                    ],
+                    subject: 'Hello World from the SendGrid Node.js Library!'
+                }
+            ],
+            from: {
+                email: 'sindhu.h.43@gmail.com'
+            },
+            content: [
+                {
+                    type: 'text/plain',
+                    value: 'Hello, Email!'
+                }
+            ]
+        }
+    });
+    sg.API(request)
+        .then(response => {
+            console.log(response.statusCode);
+            console.log(response.body);
+            console.log(response.headers);
+        })
+        .catch(error => {
+            console.log(error.response.statusCode);
+        });
+})
+
 server.post('/enrollcourse/:id', function (req, res, next) {
     var studentId = JSON.parse(req.body);
     // SECURITY ISSUE: never take user-id from client. 
@@ -91,6 +142,7 @@ server.post('/dropCourse/:id', function (req, res, next) {
             });
         });
 });
+
 
 server.del('/course/:id', function (req, res, next) {
     db.courses.remove({
@@ -193,9 +245,10 @@ server.post("/deleteCourseTiming/:id", function (req, res, next) {
 server.post('/setProfessorLocation/:id', function (req, res, next) {
     var location = JSON.parse(req.body);
     var courseId = ObjectId(req.params.id);
+    var startAttendanceTime = (new Date()).getTime();
     db.courses.findOne({ _id: courseId }, function (err, course) {
         db.courses.update({ _id: courseId }, {
-            $set: { "professorLocation": location }
+            $set: { "professorLocation": location, "startAttendanceTime": startAttendanceTime }
         }, function (err, result) {
             utils.sendObjectInResponse(res, result);
         })

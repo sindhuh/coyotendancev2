@@ -20,6 +20,7 @@ export class AddEditCoursePage {
   courseId: any;
   courseDates: any;
   markAttendanceButton : any;
+  startAttendanceButton: any;
   constructor(public nav: NavController, public backend: Backend, public navParams: NavParams) {
     this.course = {};
     this.day = "";
@@ -31,6 +32,7 @@ export class AddEditCoursePage {
     this.course.students = [];
     this.course.timings = [];
     this.course.dateAndAttendance = {};
+    this.course.startAttendanceButton = true;
     this.course.markAttendanceButton = true;
     this.backend.loadLocations().then(locations => {
       this.locations = locations;
