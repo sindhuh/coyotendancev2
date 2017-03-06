@@ -20,7 +20,7 @@ export class Backend {
   location = {};
   userDetails: any = null;
   ipAddress: any = "";
-  BASE_URL: string = "http://10.0.27.247:8888/";
+  BASE_URL: string = "http://192.168.0.102:8888/";
   constructor(public http: Http, public events: Events) {
     this.userDetails = JSON.parse(localStorage.getItem("userObject"));
   }

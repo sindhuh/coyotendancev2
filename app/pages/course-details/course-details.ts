@@ -45,7 +45,6 @@ export class CourseDetailsPage {
         this.professor = course.users[course.professorID];
         this.enrolledStudents = course.students.map(studentId => course.users[studentId]);
         this.course = course;
-        console.log(JSON.stringify(this.backend.userDetails))
       });
     }
   }

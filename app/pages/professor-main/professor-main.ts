@@ -29,13 +29,18 @@ export class ProfessorMainPage {
                 courseTime.startTime.split(":")[0], courseTime.startTime.split(":")[1]);
               var endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
                 courseTime.endTime.split(":")[0], courseTime.endTime.split(":")[1]);
+              console.log((new Date()).getTime(), startTime, startTime.getTime(), endTime, endTime.getTime())
               if ((new Date()).getTime() >= startTime.getTime() && (new Date()).getTime() < endTime.getTime()) {
+                console.log("reaching attendance: 1");
                 course.startAttendanceButton = null;
               } else {
                 course.startAttendanceButton = true;
+                console.log("reaching attendance: 2");
+
               }
             } else {
               course.startAttendanceButton = true;
+              console.log("reaching attendance: 3");
             }
           }
         });

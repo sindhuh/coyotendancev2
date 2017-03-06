@@ -211,7 +211,6 @@ server.post("/addCourseTiming/:id", function (req, res, next) {
                 _.forEach(newCourseDates, function (date) {
                     dateAndAttendance[date] = [];
                 });
-                //ikkada timing add chesinapudu dateAndAttendance ki dates add avatledhu 
                 db.courses.update({ _id: courseId }, {
                     $set: { "dateAndAttendance": dateAndAttendance, "timings": modifiedCourse.timings }
                 }, function (err, result) {

@@ -22,12 +22,18 @@
             color: #333333;
         }
     }
-        .item-background {
-            background-color: #ffc2cd;
-        }   
-        .item-heading {
-             margin : 0;
-            font-weight: bold
-        }
-    
+    .item-background {
+        background-color: #ffc2cd;
+    }   
+    .item-heading {
+        margin : 0;
+        font-weight: bold;
+        color: black;
+    }
+    .item {
+        padding-left: 4px;
+    }
+    ion-item-divider {
+        padding-left: 8px;
+    }
 }

@@ -23,6 +23,7 @@
     <ion-item-divider class="item-background">
       <ion-label class="item-heading">Timings</ion-label>
     </ion-item-divider>
+    
     <ion-item-sliding *ngFor="let timing of course.timings">
       <ion-item>
         <ion-label>
@@ -40,6 +41,8 @@
     <ion-item-sliding *ngFor="let student of enrolledStudents">
       <ion-item>
         <ion-avatar item-left>
+          <img src="img/user.png"/>
+          
         </ion-avatar>
         <h2>{{student.name}}</h2>
         <p>{{student.coyoteID}}</p>

@@ -12,11 +12,12 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content padding class="page1">
+<ion-content padding class="professor-main">
   <ion-list>
     <ion-item-sliding *ngFor="let course of courses">
       <ion-item (click)="viewCourse(course)">
-        <ion-avatar item-left>
+       <ion-avatar item-left>
+          <img src="img/course.png">
         </ion-avatar>
         <h2>{{course.name}}</h2>
         <p>{{course.title}}</p>
